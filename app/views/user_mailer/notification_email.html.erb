@@ -46,11 +46,11 @@
 							<tr style="padding: 0;vertical-align: top;text-align: left;">
 								<td class="wrapper last" style="word-break: break-word;-webkit-hyphens: auto;-moz-hyphens: auto;hyphens: auto;padding: 10px 20px 0px 0px;vertical-align: top;text-align: left;color: #222222;font-family: &quot;Helvetica&quot;, &quot;Arial&quot;, sans-serif;font-weight: normal;margin: 0;line-height: 19px;font-size: 14px;position: relative;padding-right: 0px;border-collapse: collapse;"><h4 style="color: #222222;font-family: &quot;Helvetica&quot;, &quot;Arial&quot;, sans-serif;font-weight: normal;padding: 0;margin: 5px 0 15px 0;text-align: left;line-height: 1.3;word-break: normal;font-size: 22px;display: block;">Hi<%= " #{@user.first_name}" %>,</h4>
 								<p style="margin: 0;margin-bottom: 10px;color: #222222;font-family: &quot;Helvetica&quot;, &quot;Arial&quot;, sans-serif;font-weight: normal;padding: 0;text-align: left;line-height: 19px;font-size: 14px;">
-									<% if @product.web_name == "AWS"%>
-										Your instance <%= @product.name + ' (' + @product.product_type + ')'%> has been terminated and you will not be charged from here onwards.
+									<% if @product.web_name == "AWS" %>
+										Your request for launching instance <%= @product.name + ' (' + @product.product_type + ')' %> with AMI (<%= @product.image_id %>) is under process. You will be notified with the details after successful launch of your instance.
 									<% elsif @product.web_name == "DigitalOcean" %>
-										Your instance <%= @product.name + ' (' + SizeType.find_by_size_id(@product.size_type).name + ')'%> has been terminated and you will not be charged from here onwards.
-									<% end%>
+										Your request for launching instance <%= @product.name + ' (' + SizeType.find_by_size_id(@product.size_type).name + ')' %> with Image (<%= @product.image_id %>) is under process. You will be notified with the details after successful launch of your instance.
+									<% end %>
 								</p>
 								<span class="devider" style="border-bottom: 1px solid #eee;margin: 15px -15px;display: block;"></span>
 								<p style="margin: 0;margin-bottom: 10px;color: #222222;font-family: &quot;Helvetica&quot;, &quot;Arial&quot;, sans-serif;font-weight: normal;padding: 0;text-align: left;line-height: 19px;font-size: 14px;">
@@ -68,14 +68,15 @@
 										</td>
 									</tr>
 								</table>
+								<p style="margin: 0;margin-bottom: 10px;color: #222222;font-family: &quot;Helvetica&quot;, &quot;Arial&quot;, sans-serif;font-weight: normal;padding: 0;text-align: left;line-height: 19px;font-size: 14px;">
+									Thanks for joining and have a great day!
+								</p>
 								<!---END: Note Panel-->
 								</td>
 							</tr>
 						</table></td>
 					</tr>
-				</table>
-				<!-- END: Content -->
-				<!-- BEGIN: Footer -->
+				</table><!-- END: Content --><!-- BEGIN: Footer -->
 				<table class="footer" align="center" style="border-spacing: 0;border-collapse: collapse;padding: 0;vertical-align: top;text-align: left;width: 100%;background: #2f2f2f;">
 					<tr style="padding: 0;vertical-align: top;text-align: left;">
 						<td class="center" align="center" style="word-break: break-word;-webkit-hyphens: auto;-moz-hyphens: auto;hyphens: auto;padding: 0;vertical-align: middle;text-align: center;color: #fff;font-family: &quot;Helvetica&quot;, &quot;Arial&quot;, sans-serif;font-weight: normal;margin: 0;line-height: 19px;font-size: 14px;border-collapse: collapse;">
@@ -94,33 +95,21 @@
 											</tr>
 										</table></td>
 									</tr>
-								</table>
-								<!-- END: Footer Panel List -->
-								</td>
+								</table><!-- END: Footer Panel List --></td>
 							</tr>
 						</table></td>
 					</tr>
-				</table>
-				<!--- END: Footer --->
-				</td>
+				</table><!--- END: Footer ---></td>
 			</tr>
 		</table>
+		<!--p>Hi, <%= @user.first_name %></p>
+		<p>
+		<% if @product.web_name == "AWS" %>
+		Your request for launching instance <%= @product.name + ' (' + @product.product_type + ')' %> with AMI (<%= @product.image_id %>) is under process. You will be notified with the details after successful launch of your instance.
+		<% elsif @product.web_name == "DigitalOcean" %>
+		Your request for launching instance <%= @product.name + ' (' + SizeType.find_by_size_id(@product.size_type).name + ')' %> with Image (<%= @product.image_id %>) is under process. You will be notified with the details after successful launch of your instance.
+		<% end %>
+		</p>
+		<p>Thanks for joining and have a great day!</p-->
 	</body>
-</html>
-
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
-  </head>
-  <body>
-   <p>Hi, <%= @user.first_name %></p>
-    <p>
-      <% if @product.web_name == "AWS"%>
-        Your instance <%= @product.name + ' (' + @product.product_type + ')'%> has been terminated and you will not be charged from here onwards.
-      <% elsif @product.web_name == "DigitalOcean" %>
-        Your instance <%= @product.name + ' (' + SizeType.find_by_size_id(@product.size_type).name + ')'%> has been terminated and you will not be charged from here onwards.
-      <% end%>
-    </p>
-  </body>
 </html>
