@@ -6,11 +6,7 @@
   <body>
     <p>Hi, <%= @user.first_name %></p>
     <p>
-      <% if @product.web_name == "AWS" %>
-        Your request for launching instance <%= @product.name + ' (' + @product.product_type + ')' %> with AMI (<%= @product.image_id %>) is under process. You will be notified with the details after successful launch of your instance.
-      <% elsif @product.web_name == "DigitalOcean" %>
-        Your request for launching instance <%= @product.name + ' (' + SizeType.find_by_size_id(@product.size_type).name + ')' %> with Image (<%= @product.image_id %>) is under process. You will be notified with the details after successful launch of your instance.
-      <% end %>
+      Your request for launching instance <%= @product.name + ' (' + @product.get_value + ')' %> with AMI (<%= @product.image_id %>) is under process. You will be notified with the details after successful launch of your instance.
     </p>
     <p>Thanks for joining and have a great day!</p>
   </body>
