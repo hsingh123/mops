@@ -1,9 +1,8 @@
 class ProductsController < ApplicationController
-  
+
   respond_to :html
   skip_before_action :authenticate_user!, only: [:transaction_details]
-  before_action :set_digital_ocean
-  
+
   def index
     respond_with @products = current_user.products.where(web_name: AppConfig.cloud[:name]).order('launch_time DESC')
   end
@@ -28,11 +27,7 @@ class ProductsController < ApplicationController
     Product.transaction do
       @product = current_user.products.create(product_params)
       type = AppConfig.cloud[:name]
-      if type == "AWS"
-        cost = ProductType.find_by_name(params[:product][:product_type]).cost_per_month
-      elsif type == "DigitalOcean"
-        cost = SizeType.find_by_size_id(params[:product][:size_type]).cost_per_month
-      end
+      cost = @product.get_cost_per_month(params)
       @product.update_attributes(web_name: type, cost: cost, status: 'pending')
       paypal_url = @product.paypal_url
       if paypal_url
@@ -47,26 +42,17 @@ class ProductsController < ApplicationController
     product = Product.find(params[:id])
     if product.profileId && product.product_id
 
-      if product.web_name == "AWS"
-        response = product.send(:destroy_instance)
-        if response[:instances_set].first[:current_state][:name] == "shutting-down"
-          ppr = PayPal::Recurring.new(:profile_id => product.profileId)
-          ppr.cancel
-          product.update_attributes(status: 'terminated')
-          subscription = Subscription.find_by_product_id(params[:id])
-          subscription.update_attributes(status: "expired")
-        end
-      elsif product.web_name == "DigitalOcean"
-        response = product.send(:destroy_droplet)
-        if response.status == "OK"
-          ppr = PayPal::Recurring.new(:profile_id => product.profileId)
-          ppr.cancel
-          product.update_attributes(status: 'terminated')
-          subscription = Subscription.where(product_id: product.id, status: "active")
-          subscription.first.update_attributes(status: "expired") unless subscription.empty?
-        end
+      response = product.send(:destroy_server)
+      if response == "valid"
+        ppr = PayPal::Recurring.new(:profile_id => product.profileId)
+        ppr.cancel
+        product.update_attributes(status: 'terminated')
+        subscription = Subscription.where(product_id: product.id, status: "active")
+        subscription.first.update_attributes(status: "expired") unless subscription.empty?
+        flash[:notice] = "Server Destroyed Sucessfully."
+      else
+        flash[:error] = "Some error while destroying Server. Try again."
       end
-
     end
     redirect_to :back
   end
@@ -81,15 +67,8 @@ class ProductsController < ApplicationController
         subscript = product.user.subscriptions.where(sub_tran: params[:txn_id])
         unless !subscript.empty?
           unless product.product_id
-            if product.web_name == "AWS"
-              product_type = product[:product_type]
-              size_type = nil
-              product.send(:launch_ec2_instance)
-            elsif product.web_name == "DigitalOcean"
-              size_type = product[:size_type]
-              product_type = nil
-              product.send(:launch_droplet)
-            end
+            product_type, size_type = product[:product_type], product[:size_type]
+            product.send(:launch_server)
             end_date = product.launch_time + 30.days
             notify_date = end_date - 7.days
 
@@ -126,13 +105,6 @@ class ProductsController < ApplicationController
       end
     end
     redirect_to servers_path
-  end
-  
-  def set_digital_ocean
-    if AppConfig.cloud[:name] == "DigitalOcean"
-      Digitalocean.client_id  = AppConfig.cloud[:creds][:access_key]
-      Digitalocean.api_key    = AppConfig.cloud[:creds][:secret_token]
-    end
   end
 
   private

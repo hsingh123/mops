@@ -15,6 +15,10 @@
 		<i class="fa fa-home"></i>
 		<a href="/">
 		Home </a>
+		<i class="fa fa-angle-right"></i>
+	</li>
+	<li>
+		My Servers
 	</li>
 <% end %>
 <table class="table table-striped table-bordered table-hover" id="sample_1">
@@ -22,11 +26,7 @@
 		<tr>
 			<th>Name</th>
 			<th class='hidden-480'>Server ID</th>
-			<%if AppConfig.cloud[:name] == "AWS"%>
 			<th class='hidden-phone'>Server Type</th>
-			<%elsif AppConfig.cloud[:name] == "DigitalOcean"%>
-			<th class='hidden-phone'>Size Type</th>
-			<%end%>
 			<th>Launch Time</th>
 			<th class='hidden-480'>Cost</th>
 			<th class='hidden-480'>Status</th>
@@ -38,11 +38,7 @@
 		<tr>
 			<td><%= instance.name %></td>
 			<td><%= instance.product_id %></td>
-			<%if AppConfig.cloud[:name] == "AWS"%>
-			<td><%= instance.product_type %></td>
-			<%else%>
-			<td><%= SizeType.find_by_size_id(instance.size_type).name %></td>
-			<%end%>
+			<td><%= instance.get_value %></td>
 			<td><%= instance.launch_time %></td>
 			<td><%= instance.cost%></td>
 			<% inst_state = instance.status || "unknown" %>

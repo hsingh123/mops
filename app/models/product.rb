@@ -1,7 +1,7 @@
 include ActionView::Helpers::NumberHelper
 
 class Product < ActiveRecord::Base
-  include AwsAction
+  include AppConfig.cloud[:name].constantize
 
   belongs_to :user
 
@@ -11,11 +11,9 @@ class Product < ActiveRecord::Base
   before_create :add_ssh_keys
 
   def paypal_url
-    if web_name == "AWS"
-      val = product_type
-    elsif web_name == "DigitalOcean"
-      val = SizeType.find_by_size_id(size_type).name
-    end
+
+    val = get_value
+
     values = {
       :business => AppConfig.business_email,
       :cmd => '_xclick-subscriptions',

@@ -34,7 +34,7 @@
 				<div class="form-group">
 					<label class="col-md-3 control-label">Select Image:</label>
 					<div class="col-md-9">
-						<% if AppConfig.cloud[:name] == "AWS" %>
+						<% if AppConfig.cloud[:name] == "AwsServer" %>
 							<%= f.select :image_id, AppConfig.ami_ids,{}, {class: "form-control", id: "ami"} %>
 						<% elsif %>
 							<% AppConfig.image_ids.each do |id| %>
@@ -47,19 +47,22 @@
 						<% end %>
 					</div>
 				</div>
-			<% if AppConfig.cloud[:name] == "AWS" %>
-				<% ProductType.all.each do |it| %>
-					<div class="form-group">
-						<div class="col-md-3 control-label">
-							<input type="radio" name="product[size_type]" class="product_type" value="<%= it.size_id %>" />&nbsp;<label><b><%= it.name %></b></label>
+			<% if AppConfig.cloud[:name] == "AwsServer" %>
+				<div class="form-group">
+					<label class="col-md-3 control-label">Select Size :</label>
+					<div class="col-md-9">
+						<% ProductType.all.each do |it| %>
+						<div class="col-md-3 well sizes" style="cursor:pointer;" id="<%= it.name.downcase %>">
+							<input type="radio" name="product[product_type]" class="product_type hidden" value="<%= it.name %>" />
+							<h4 class="text-center"><b><%= it.name %></b></h4>
+							<div class="row text-center"><%= it.memory %> Memory</div>
+							<div class="row text-center"><%= it.cost %></div>
 						</div>
-						<div class="col-md-3 form-container">
-							<div class="row"><%= it.memory %></div>
-							<div class="row"><%= it.cost %></div>
-						</div>
+						<div class="col-md-1"></div>
+					<% end %>
 					</div>
-				<% end %>
-			<% elsif AppConfig.cloud[:name] == "DigitalOcean" %>
+				</div>
+			<% elsif AppConfig.cloud[:name] == "DigitalOceanServer" %>
 				<div class="form-group">
 					<label class="col-md-3 control-label">Select Size :</label>
 					<div class="col-md-9">

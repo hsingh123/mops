@@ -22,6 +22,11 @@
 		<i class="fa fa-angle-right"></i>
 	</li>
 	<li>
+		<a href="<%= servers_path %>">
+		My Servers </a>
+		<i class="fa fa-angle-right"></i>
+	</li>
+	<li>
 		<%= @product.name.try(:humanize) %>
 	</li>
 <% end %>
@@ -88,16 +93,10 @@
 					<!--/span-->
 					<div class="col-md-6">
 						<div class="form-group">
-							<label class="control-label col-md-3">
-								<%= AppConfig.cloud[:name] == "DigitalOcean" ? 'Size Type:' : 'Server Type:' %>
-							</label>
+							<label class="control-label col-md-3">Server Type:</label>
 							<div class="col-md-9">
 								<p class="form-control-static">
-									<%if AppConfig.cloud[:name] == "AWS"%>
-										<%= @product.product_type %>
-									<% elsif AppConfig.cloud[:name] == "DigitalOcean" %>
-										<%= SizeType.find_by_size_id(@product.size_type).name %>
-									<%end%>
+										<%= @product.get_value %>
 								</p>
 							</div>
 						</div>
@@ -158,7 +157,7 @@
 				<tr>
 					<th >Server ID</th>
 					<th>Web Type</th>
-					<th>Product Type</th>
+					<th>Server Type</th>
 					<th>Image ID</th>
 					<th>Subscribed On</th>
 					<th>Renewal Date</th>
@@ -171,7 +170,7 @@
 						<tr>
 							<td><%= subscription.product ? subscription.product.product_id : '-' %></td>
 							<td><%= subscription.web_type %></td>
-							<td><%= subscription.product_type %></td>
+							<td><%= subscription.product.get_value %></td>
 							<td><%= subscription.image_id %></td>
 							<td><%= subscription.start_date %></td>
 							<td><%= subscription.end_date %></td>
